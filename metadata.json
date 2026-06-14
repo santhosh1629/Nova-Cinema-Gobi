@@ -1,0 +1,7 @@
+{
+  "name": "Nova Cinema Gobi",
+  "description": "Nova Cinema Gobi - Premium Private Theater & Cinema Experience",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

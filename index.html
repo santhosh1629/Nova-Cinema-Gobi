@@ -1,0 +1,114 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#8B5CF6" />
+    <meta
+      name="description"
+      content="Nova Cinema Gobi - Your premium cinematic destination."
+    />
+    <title>Nova Cinema Gobi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Poppins', 'Inter', 'sans-serif'],
+              logo: ['Cinzel', 'serif'],
+            },
+            colors: {
+              primary: '#D4AF37', // Metallic Gold
+              'primary-dark': '#9A7B2C', 
+              accent: '#C0C0C0', // Silver
+              background: '#020617', // Deep Navy/Black
+              surface: '#0F172A',
+              'surface-light': '#1E293B',
+              textPrimary: '#F8FAFC',
+              textSecondary: '#94A3B8',
+            },
+            backgroundImage: {
+              'gold-gradient': 'linear-gradient(to bottom, #F9D976 0%, #D4AF37 50%, #A67C00 100%)',
+              'royal-gradient': 'radial-gradient(circle at 50% 50%, #1E1B4B 0%, #020617 100%)',
+            },
+            keyframes: {
+              'fade-in-down': {
+                '0%': { opacity: '0', transform: 'translateY(-10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              'fade-in-up': {
+                '0%': { opacity: '0', transform: 'translateY(10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              'gold-glow': {
+                '0%, 100%': { filter: 'drop-shadow(0 0 8px rgba(212, 175, 55, 0.4))' },
+                '50%': { filter: 'drop-shadow(0 0 20px rgba(212, 175, 55, 0.7))' },
+              }
+            },
+            animation: {
+              'fade-in-down': 'fade-in-down 0.4s ease-out forwards',
+              'fade-in-up': 'fade-in-up 0.4s ease-out forwards',
+              'gold-glow': 'gold-glow 4s ease-in-out infinite alternate',
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      .scrollbar-thin {
+        scrollbar-width: thin;
+        scrollbar-color: #D4AF37 #020617;
+      }
+      .scrollbar-thin::-webkit-scrollbar {
+        height: 6px;
+        width: 6px;
+      }
+      .scrollbar-thin::-webkit-scrollbar-track {
+        background: #020617;
+      }
+      .scrollbar-thin::-webkit-scrollbar-thumb {
+        background-color: #D4AF37;
+        border-radius: 10px;
+      }
+      .text-gold {
+        background: linear-gradient(to bottom, #FDE68A 0%, #D4AF37 50%, #B45309 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      /* Snappy transitions */
+      * {
+        transition-duration: 200ms !important;
+      }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.1.1/",
+    "react": "https://aistudiocdn.com/react@^19.1.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
+    "react-router-dom": "https://aistudiocdn.com/react-router-dom@^7.9.1",
+    "recharts": "https://aistudiocdn.com/recharts@^3.2.1",
+    "qrcode.react": "https://aistudiocdn.com/qrcode.react@^4.2.0",
+    "framer-motion": "https://aistudiocdn.com/framer-motion@^11.3.19",
+    "typewriter-effect": "https://aistudiocdn.com/typewriter-effect@^2.21.0",
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
+  }
+}
+</script>
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
