@@ -207,11 +207,28 @@ const OrdersManager: React.FC<{orders: Order[], onRefresh: () => void, onViewOrd
                                         {order.seatNumber && <div className="mt-2 text-xs font-black text-amber-400 uppercase tracking-tighter bg-amber-500/10 px-2 py-0.5 rounded inline-block">Location: {order.seatNumber}</div>}
                                     </td>
                                     <td className="px-6 py-4 whitespace-normal text-sm text-gray-400 align-top">
-                                        <ul className="space-y-1">
+                                        <ul className="space-y-1.5">
                                             {order.items.map(i => (
-                                                <li key={i.id + (i.selectedSlotId || '')} className="flex items-center gap-2">
-                                                    <span className={i.isDelivered ? 'line-through opacity-50' : 'font-semibold text-white'}>{i.name} x{i.quantity}</span>
-                                                    {i.isDelivered && <span className="text-[10px] text-green-500 font-bold uppercase">Served</span>}
+                                                <li key={i.id + (i.selectedSlotId || '')} className="flex flex-col gap-0.5">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className={i.isDelivered ? 'line-through opacity-50' : 'font-semibold text-white'}>{i.name} x{i.quantity}</span>
+                                                        {i.isDelivered && <span className="text-[10px] text-green-500 font-bold uppercase">Served</span>}
+                                                    </div>
+                                                    {i.selectedStartTime && (() => {
+                                                        const start = new Date(i.selectedStartTime);
+                                                        if (!isNaN(start.getTime())) {
+                                                            const duration = i.durationMinutes || 60;
+                                                            const end = new Date(start.getTime() + duration * 60000);
+                                                            const formattedStart = start.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+                                                            const formattedEnd = end.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+                                                            return (
+                                                                <span className="text-[11px] text-amber-400 font-semibold tracking-tight">
+                                                                    🕒 Slot: {formattedStart} – {formattedEnd}
+                                                                </span>
+                                                            );
+                                                        }
+                                                        return null;
+                                                    })()}
                                                 </li>
                                             ))}
                                         </ul>
@@ -613,6 +630,32 @@ export const OwnerDashboard: React.FC = () => {
                                             : 'N/A'}
                                     </span>
                                 </div>
+                                {(() => {
+                                    const slotItem = viewingOrder.items.find(i => i.selectedStartTime);
+                                    if (slotItem?.selectedStartTime) {
+                                        const start = new Date(slotItem.selectedStartTime);
+                                        if (!isNaN(start.getTime())) {
+                                            const duration = slotItem.durationMinutes || 60;
+                                            const end = new Date(start.getTime() + duration * 60000);
+                                            return (
+                                                <div className="bg-amber-400/10 border border-amber-400/25 p-3 rounded-2xl space-y-1 mt-2">
+                                                    <span className="text-[9px] font-black tracking-widest text-amber-400 uppercase block">🎮 Booked Play Session Slot</span>
+                                                    <div className="flex justify-between items-center text-xs font-mono font-bold text-gray-200">
+                                                        <div>
+                                                            <span className="text-[8px] text-white/40 uppercase block">Start Time</span>
+                                                            <span className="text-amber-300">{start.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}</span>
+                                                        </div>
+                                                        <div className="text-right">
+                                                            <span className="text-[8px] text-white/40 uppercase block">End Time</span>
+                                                            <span className="text-amber-300">{end.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        }
+                                    }
+                                    return null;
+                                })()}
                             </div>
 
                             {/* Cart Contents list resembling receipt stub */}
@@ -629,6 +672,19 @@ export const OwnerDashboard: React.FC = () => {
                                             <div className="pr-2 min-w-0">
                                                 <p className="font-bold text-white truncate">{i.name}</p>
                                                 <p className="text-[9px] text-gray-400 font-mono">Qty: {i.quantity} &times; ₹{i.price}</p>
+                                                {i.selectedStartTime && (() => {
+                                                    const start = new Date(i.selectedStartTime);
+                                                    if (!isNaN(start.getTime())) {
+                                                        const duration = i.durationMinutes || 60;
+                                                        const end = new Date(start.getTime() + duration * 60000);
+                                                        return (
+                                                            <p className="text-[10px] text-amber-400 mt-1 font-semibold">
+                                                                🕒 Slot: {start.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })} – {end.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}
+                                                            </p>
+                                                        );
+                                                    }
+                                                    return null;
+                                                })()}
                                                 <div className="mt-1">
                                                     {i.isDelivered ? (
                                                         <span className="text-[8px] bg-green-500/20 text-green-400 px-1 py-0.5 rounded uppercase font-black tracking-tighter">Served</span>
