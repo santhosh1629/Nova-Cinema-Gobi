@@ -391,7 +391,6 @@ export const checkSlotAvailability = async (itemId: string, slotId: string, star
         const { data, error } = await supabase.from('order_items')
             .select('*, orders!inner(status)')
             .in('menu_item_id', serviceIdsToCheck)
-            .eq('selected_slot_id', slotId)
             .in('orders.status', ['pending', 'prepared', 'collected', 'partially_collected']); 
 
         if (error) return { isAvailable: true }; 
