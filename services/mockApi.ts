@@ -40,7 +40,7 @@ const mapOrder = (o: any): Order => ({
     totalAmount: Number(o.total_amount || 0),
     qrToken: o.qr_token,
     status: o.status as OrderStatusEnum,
-    timestamp: new Date(o.created_at),
+    timestamp: new Date(o.timestamp || o.created_at),
     collectedAt: o.collected_at,
     orderType: 'real',
     items: (o.order_items || []).map((oi: any) => ({
@@ -316,7 +316,7 @@ export const createPaymentRecord = async (data: any) => {
 
 export const getStudentOrders = async (studentId: string): Promise<Order[]> => { 
     try { 
-        const { data, error } = await supabase.from('orders').select('*, order_items(*)').eq('student_id', studentId).order('created_at', { ascending: false }); 
+        const { data, error } = await supabase.from('orders').select('*, order_items(*)').eq('student_id', studentId).order('timestamp', { ascending: false }); 
         if (error) throw error; 
         return (data || []).map(mapOrder); 
     } catch (err) { return []; } 
@@ -329,10 +329,24 @@ export const updateOrderStatus = async (order_id: string, status: OrderStatusEnu
 
 export const getOrderById = async (id: string): Promise<Order> => { 
     try { 
-        const { data, error } = await supabase.from('orders').select('*, order_items(*)').eq('id', id).single(); 
+        if (!id) {
+            throw new Error("Order ID is required");
+        }
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+        let query = supabase.from('orders').select('*, order_items(*)');
+        if (isUuid) {
+            query = query.eq('id', id);
+        } else {
+            query = query.eq('qr_token', id);
+        }
+        const { data, error } = await query.single(); 
         if (error) throw error; 
+        if (!data) throw new Error("Order not found in database");
         return mapOrder(data); 
-    } catch (e) { throw new Error("Could not find order."); } 
+    } catch (e: any) { 
+        console.error("Database error in getOrderById:", e);
+        throw new Error("Could not find order. " + (e?.message || e)); 
+    } 
 };
 
 export const simulateIncomingOrder = async (): Promise<void> => { 
@@ -690,7 +704,7 @@ export const getAdminDashboardStats = async (): Promise<AdminStats> => {
 export const getTodaysDashboardStats = async (): Promise<TodaysDashboardStats> => { 
     try { 
         const today = new Date().toISOString().split('T')[0]; 
-        const { data, error } = await supabase.from('orders').select('total_amount, order_items(name, quantity)').gte('created_at', today).neq('status', 'cancelled'); 
+        const { data, error } = await supabase.from('orders').select('total_amount, order_items(name, quantity)').gte('timestamp', today).neq('status', 'cancelled'); 
         if (error) throw error; 
         const totalIncome = (data || []).reduce((sum, o) => sum + Number(o.total_amount || 0), 0); 
         const itemCounts: Record<string, number> = {}; 
@@ -769,7 +783,7 @@ export const getAllStudentCoupons = async (id: string) => {
 
 export const getOwnerOrders = async (): Promise<Order[]> => { 
     try { 
-        const { data, error } = await supabase.from('orders').select('*, order_items(*)').order('created_at', { ascending: false }); 
+        const { data, error } = await supabase.from('orders').select('*, order_items(*)').order('timestamp', { ascending: false }); 
         if (error) throw error; 
         return (data || []).map(mapOrder); 
     } catch (err) { return []; } 

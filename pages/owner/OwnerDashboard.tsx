@@ -516,34 +516,145 @@ export const OwnerDashboard: React.FC = () => {
     return (
         <div className="space-y-8 pb-20">
             {viewingOrder && (
-                <div className="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4 animate-fade-in" onClick={() => setViewingOrder(null)}>
-                    <div className="bg-gray-900 p-8 rounded-3xl border border-white/10 max-w-md w-full shadow-2xl relative" onClick={e => e.stopPropagation()}>
-                        <button onClick={() => setViewingOrder(null)} className="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors text-2xl font-bold">&times;</button>
-                        <h2 className="text-xl font-black text-white uppercase mb-6 tracking-tight">Order Insight</h2>
-                        <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2 scrollbar-thin">
-                            <div className="bg-white/5 p-4 rounded-xl">
-                                <p className="text-[10px] uppercase font-bold text-gray-500 mb-1">Customer</p>
-                                <p className="font-bold text-lg text-white">{viewingOrder.studentName}</p>
-                                {viewingOrder.customerPhone ? (
-                                    <a href={`tel:${viewingOrder.customerPhone}`} className="text-sm text-indigo-400 hover:underline flex items-center gap-2 mt-1">
-                                        📞 {viewingOrder.customerPhone}
-                                    </a>
-                                ) : (
-                                    <p className="text-sm text-gray-500 italic mt-1">Phone not available</p>
-                                )}
+                <div className="fixed inset-0 bg-black/85 z-[100] flex items-center justify-center p-4 overflow-y-auto animate-fade-in" onClick={() => setViewingOrder(null)}>
+                    {/* The Ticket Container */}
+                    <div className="relative bg-[#4c1d95] text-white rounded-[2.5rem] overflow-hidden max-w-md w-full shadow-[0_20px_50px_rgba(0,0,0,0.6)] animate-pop-in border border-white/10" onClick={e => e.stopPropagation()}>
+                        
+                        {/* Close button */}
+                        <button onClick={() => setViewingOrder(null)} className="absolute top-4 right-5 text-white/50 hover:text-white transition-colors text-2xl font-bold z-20">&times;</button>
+                        
+                        {/* Top Section: Ticket Header / Primary Item */}
+                        <div className="p-6 pb-8 bg-black/25">
+                            <div className="flex gap-4 items-center">
+                                {/* Poster Image if exists, else an elegant icon */}
+                                <div className="w-16 h-16 rounded-xl overflow-hidden shadow-lg flex-shrink-0 bg-black/40 flex items-center justify-center border border-white/10">
+                                    {viewingOrder.items[0]?.imageUrl ? (
+                                        <img src={viewingOrder.items[0].imageUrl} alt="Item" className="w-full h-full object-cover" />
+                                    ) : (
+                                        <span className="text-2xl">🎟️</span>
+                                    )}
+                                </div>
+                                <div className="flex-grow min-w-0">
+                                    <h2 className="text-white text-lg font-black leading-tight uppercase font-heading tracking-tight truncate">
+                                        {viewingOrder.items[0]?.name || 'Canteen Ticket'}
+                                    </h2>
+                                    <p className="text-gray-300 text-[10px] font-bold uppercase tracking-widest mt-1">
+                                        {viewingOrder.items.some(i => i.category === 'game') ? '🎬 Experience Ticket' : '🍔 Food & Beverage'}
+                                    </p>
+                                </div>
                             </div>
-                            <div className="bg-white/5 p-4 rounded-xl">
-                                <p className="text-[10px] uppercase font-bold text-gray-500 mb-2">Cart Contents</p>
-                                <ul className="space-y-2">
+                        </div>
+
+                        {/* Scalloped Edge / Perforation Section */}
+                        <div className="relative h-6 bg-black/25 flex items-center">
+                            {/* Left Cut-out */}
+                            <div className="absolute -left-3 w-6 h-6 rounded-full bg-gray-950 z-10 shadow-inner"></div>
+                            {/* Dashed Line */}
+                            <div className="w-full border-b-2 border-dashed border-white/20 mx-4"></div>
+                            {/* Right Cut-out */}
+                            <div className="absolute -right-3 w-6 h-6 rounded-full bg-gray-950 z-10 shadow-inner"></div>
+                        </div>
+
+                        {/* Middle Section: Ticket Details stub */}
+                        <div className="p-6 pt-6 space-y-4 bg-black/10">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <span className="block text-[9px] font-bold text-white/40 uppercase tracking-widest">Order ID</span>
+                                    <span className="font-mono font-bold text-gray-200">#{viewingOrder.id.slice(-6).toUpperCase()}</span>
+                                </div>
+                                <div>
+                                    <span className="block text-[9px] font-bold text-white/40 uppercase tracking-widest">Seat / Screen</span>
+                                    <span className="font-bold text-amber-300 font-mono text-xs bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 inline-block mt-0.5">
+                                        {viewingOrder.seatNumber || 'N/A'}
+                                    </span>
+                                </div>
+                                <div>
+                                    <span className="block text-[9px] font-bold text-white/40 uppercase tracking-widest animate-pulse">Status</span>
+                                    <div className="mt-1">
+                                        <span className={`px-2 py-0.5 inline-flex text-[9px] font-black uppercase tracking-widest rounded-full ${getStatusBadgeClass(viewingOrder.status)}`}>
+                                            {viewingOrder.status.replace('_', ' ')}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <span className="block text-[9px] font-bold text-white/40 uppercase tracking-widest">Type</span>
+                                    <span className="font-bold text-gray-200 text-xs inline-block mt-1">Real Transaction</span>
+                                </div>
+                            </div>
+
+                            <div className="border-t border-white/10 pt-4 space-y-3">
+                                <div className="flex items-center gap-2 text-xs text-gray-200">
+                                    <span className="text-gray-400">👤 Customer:</span>
+                                    <span className="font-bold">{viewingOrder.studentName}</span>
+                                </div>
+                                <div className="flex items-center gap-2 text-xs text-gray-200">
+                                    <span className="text-gray-400">📞 Phone:</span>
+                                    {viewingOrder.customerPhone ? (
+                                        <a href={`tel:${viewingOrder.customerPhone}`} className="text-indigo-300 hover:underline font-mono">
+                                             {viewingOrder.customerPhone}
+                                        </a>
+                                    ) : (
+                                        <span className="italic text-gray-500 text-[11px]">Not available</span>
+                                    )}
+                                </div>
+                                <div className="flex items-center gap-2 text-xs text-gray-200">
+                                    <span className="text-gray-400">📅 Date:</span>
+                                    <span className="font-medium">
+                                        {viewingOrder.timestamp && !isNaN(new Date(viewingOrder.timestamp).getTime())
+                                            ? new Date(viewingOrder.timestamp).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+                                            : 'N/A'}
+                                    </span>
+                                </div>
+                                <div className="flex items-center gap-2 text-xs text-gray-200">
+                                    <span className="text-gray-400">🕒 Registered Time:</span>
+                                    <span className="font-medium font-mono">
+                                        {viewingOrder.timestamp && !isNaN(new Date(viewingOrder.timestamp).getTime())
+                                            ? new Date(viewingOrder.timestamp).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })
+                                            : 'N/A'}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Cart Contents list resembling receipt stub */}
+                            <div className="border-t border-white/10 pt-4">
+                                <h4 className="text-[10px] font-black text-amber-400 uppercase tracking-widest mb-3 flex justify-between items-center">
+                                    <span>Receipt Items ({viewingOrder.items.length})</span>
+                                    {viewingOrder.items[0]?.durationMinutes ? (
+                                        <span className="text-[9px] lowercase font-normal text-indigo-300 bg-indigo-500/10 px-1 py-0.5 rounded">Duration: {viewingOrder.items[0].durationMinutes}m</span>
+                                    ) : null}
+                                </h4>
+                                <div className="bg-black/25 rounded-xl p-3 space-y-3 font-mono text-[11px] max-h-[150px] overflow-y-auto pr-2 scrollbar-thin">
                                     {viewingOrder.items.map(i => (
-                                        <li key={i.id} className="flex justify-between border-b border-white/5 pb-2 text-sm">
-                                            <span>{i.name} x{i.quantity}</span>
-                                            <span className="font-bold text-indigo-400">₹{i.price.toFixed(0)}</span>
-                                        </li>
+                                        <div key={i.id} className="flex justify-between items-start leading-tight">
+                                            <div className="pr-2 min-w-0">
+                                                <p className="font-bold text-white truncate">{i.name}</p>
+                                                <p className="text-[9px] text-gray-400 font-mono">Qty: {i.quantity} &times; ₹{i.price}</p>
+                                                <div className="mt-1">
+                                                    {i.isDelivered ? (
+                                                        <span className="text-[8px] bg-green-500/20 text-green-400 px-1 py-0.5 rounded uppercase font-black tracking-tighter">Served</span>
+                                                    ) : (
+                                                        <span className="text-[8px] bg-yellow-500/20 text-yellow-400 px-1 py-0.5 rounded uppercase font-black tracking-tighter">Pending Serving</span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <span className="font-bold text-indigo-300 text-right flex-shrink-0">₹{(i.price * i.quantity).toFixed(0)}</span>
+                                        </div>
                                     ))}
-                                </ul>
-                                <div className="mt-4 pt-4 flex justify-between font-black text-white uppercase border-t border-white/10"><span>Total Value</span><span>₹{viewingOrder.totalAmount.toFixed(0)}</span></div>
+                                    
+                                    {viewingOrder.discountAmount && viewingOrder.discountAmount > 0 ? (
+                                        <div className="flex justify-between border-t border-white/5 pt-2 text-[10px] text-green-400">
+                                            <span>Promo Discount ({viewingOrder.couponCode || 'Reward'})</span>
+                                            <span>-₹{viewingOrder.discountAmount.toFixed(0)}</span>
+                                        </div>
+                                    ) : null}
+                                </div>
                             </div>
+                        </div>
+
+                        {/* Bottom Section: Total Value Bar */}
+                        <div className="bg-black/40 py-4 px-6 flex justify-between items-center border-t border-white/10">
+                            <span className="text-[10px] font-black text-white/50 uppercase tracking-widest">Total Bill Paid</span>
+                            <span className="text-xl font-heading font-black text-amber-400">₹{viewingOrder.totalAmount.toFixed(0)}</span>
                         </div>
                     </div>
                 </div>
